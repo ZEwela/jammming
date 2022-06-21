@@ -8,12 +8,15 @@ class App extends Component {
   constructor(props){
     super(props);
     console.log('AppConstructor')
-    this.state = { searchResults: 
-    [
-      {name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
-      {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2}
-    ]
-  };
+    this.state = { 
+      searchResults: 
+      [
+        {name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
+        {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2}
+      ],
+      playlistName: 'Playlist Name',
+      playlistTracks: 'Playlist Tracks...'
+    };
   }
   render() {
     console.log('App', this.props)
@@ -24,7 +27,7 @@ class App extends Component {
           <SearchBar />
           <div className="App-playlist">
             <SearchResults searchResults={this.state.searchResults}/>
-            <Playlist/>
+            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks}/>
           </div>
         </div>
       </div>
