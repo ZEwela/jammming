@@ -11,20 +11,30 @@ class App extends Component {
       searchResults: 
       [
         {name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
-        {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2}
+        {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2},
+        {name: "Bu2", artist: "Ewelina", album: "Ow yeee", id:3}
       ],
       playlistName: 'Playlist Name',
       playlistTracks: [{name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
       {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2}]
     };
     this.addTrack = this.addTrack.bind(this);
+    this.removeTrack = this.removeTrack.bind(this);
   }
   addTrack(newTrack){
     if (this.state.playlistTracks.find(element => element.id === newTrack.id)) {
       return
     } else {
-      this.setState(this.state.playlistTracks.push(newTrack));
+      this.setState({
+        playlistTracks: [...this.state.playlistTracks, newTrack]
+      });
     }
+  }
+  removeTrack(unwantedTrack){
+    const result =  this.state.playlistTracks.filter(element => element.id !== unwantedTrack.id);
+    this.setState({
+      playlistTracks: result
+    });
   }
   
 
@@ -42,6 +52,7 @@ class App extends Component {
             <Playlist 
               playlistName={this.state.playlistName} 
               playlistTracks={this.state.playlistTracks} 
+              onRemove={this.removeTrack}
             />
           </div>
         </div>
