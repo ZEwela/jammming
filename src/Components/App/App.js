@@ -10,17 +10,18 @@ class App extends Component {
     this.state = { 
       searchResults: 
       [
-        {name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
-        {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2},
-        {name: "Bu2", artist: "Ewelina", album: "Ow yeee", id:3}
+        {name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1, trackURIs:6364748},
+        {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2, trackURIs:83734},
+        {name: "Bu2", artist: "Ewelina", album: "Ow yeee", id:3,trackURIs:83734548}
       ],
       playlistName: 'Playlist Name',
-      playlistTracks: [{name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1},
-      {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2}]
+      playlistTracks: [{name: "Heu", artist: "Ewelina", album: "Ow yeee", id:1, trackURIs:6364748},
+      {name: "Heu2", artist: "Ewelina", album: "Ow yeee", id:2, trackURIs:83734}]
     };
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
+    this.savePlaylist = this.savePlaylist.bind(this);
   }
   addTrack(newTrack){
     if (this.state.playlistTracks.find(element => element.id === newTrack.id)) {
@@ -42,9 +43,15 @@ class App extends Component {
       playlistName: newName
     })
   }
+  savePlaylist(){
+    let uri = [];
+    this.state.playlistTracks.map(item => uri.push(item.trackURIs));
+    return uri;
+  }
   
-
+ 
   render() {
+    console.log(this.savePlaylist())
     return (
       <div>
         <h1>Ja<span className="highlight">mmm</span>ing</h1>
@@ -60,7 +67,7 @@ class App extends Component {
               playlistTracks={this.state.playlistTracks} 
               onRemove={this.removeTrack}
               onChangeName={this.updatePlaylistName}
-
+              onSave={this.savePlaylist}
             />
           </div>
         </div>
