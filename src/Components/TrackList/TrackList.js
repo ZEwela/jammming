@@ -6,8 +6,8 @@ export class TrackList extends Component {
     render(){
         return(
             <div className="TrackList">
-                {this.props.tracks.map(track => 
-                    <Track key={track.id} track={track}/>
+                {this.props.tracks.map(item => 
+                    <Track key={item.id} track={item} onAdd={this.props.onAdd}/>
                 )}
             </div>          
         );
