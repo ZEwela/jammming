@@ -1,6 +1,6 @@
 const clientId = '51d9a7cf9f3340a2b0fa8d4a9ad6e625';
-const redirectURI = "http://localhost:3000";
-// const redirectURI = "http://ewelina.surge.sh/callback";
+// const redirectURI = "http://localhost:3000";
+const redirectURI = "http://ewelina_jammming.surge.sh";
 let accessToken;
 let userId;
 
