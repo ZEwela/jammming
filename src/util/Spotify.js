@@ -1,6 +1,7 @@
 const clientId = '51d9a7cf9f3340a2b0fa8d4a9ad6e625';
-const redirectURI = "http://ewelina.surge.sh";
+const redirectURI = "http://localhost:3000";
 let accessToken;
+let userId;
 
 const Spotify = {
     getAccessToken(){
@@ -25,10 +26,10 @@ const Spotify = {
     },
 
     search(term) {
-        const accessToken = Spotify.getAccessToken();
+        const token = Spotify.getAccessToken();
         return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`,{
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${token}`
             }               
         }).then(response => {
             return response.json();
@@ -45,19 +46,76 @@ const Spotify = {
             }));
         });
     }, 
-    savePlaylist(playlistName, playlistTracks) {
+
+    async getCurrentUserId(){
+        if (userId){
+            return userId;
+        }
+
+        const token = Spotify.getAccessToken(); 
+        const header = {Authorization: `Bearer ${token}`};
+
+        return await fetch(`https://api.spotify.com/v1/me`, 
+         {
+            headers: header              
+        })
+        .then(response => response.json())
+        .then(jsonResponse => {
+                userId = jsonResponse.id;
+                return userId;
+            }
+        )
+    },
+
+
+    async getUserPlaylists(){
+        const token = Spotify.getAccessToken();
+        const userID = await Spotify.getCurrentUserId();
+
+        return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }               
+        })
+        .then(response => response.json())
+        .then(jsonResponse => {
+            const userPlaylists = jsonResponse.items.map(playlist => ({
+                playlistId: playlist.id,
+                playlistName: playlist.name
+            })
+            )
+            return userPlaylists;
+        })
+    },
+    async savePlaylist(playlistName, playlistTracks, id, trackURIsToDelete) {
+
         if (!playlistName || !playlistTracks) {
             return;
         }
-        const accessToken = Spotify.getAccessToken();
-        const headers = {Authorization: `Bearer ${accessToken}`};
-        let userID;
+        const token = Spotify.getAccessToken();
+        const headers = {Authorization: `Bearer ${token}`};
+        const userID = await Spotify.getCurrentUserId();
 
-        return fetch(`https://api.spotify.com/v1/me`, {headers: headers})
-        .then(response => response.json())
-        .then(jsonResponse => {
-            userID = jsonResponse.id;
-            return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`,
+
+       if (id) {
+            return fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${id}`, {  
+                headers: headers,
+                method: 'PUT',
+                body: JSON.stringify({ 
+                    name: playlistName,
+                })
+            }).then(
+                fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`,{  
+                    headers: headers,
+                    method: 'PUT',
+                    body: JSON.stringify({ 
+                        uris: playlistTracks
+                    })
+                })
+            )} else {
+
+
+        return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`,
             {
                 headers: headers,
                 method: 'POST',
@@ -73,7 +131,29 @@ const Spotify = {
                     body: JSON.stringify({ uris: playlistTracks })
                 })
             })
-        })
+        }
+    },
+
+    getPlaylist(id) {
+        const token = Spotify.getAccessToken();
+        
+        return fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, 
+        {
+            headers: {Authorization: `Bearer ${token}`}
+        }
+        ).then(response => response.json()
+        ).then(jsonResponse => {
+            const retrivedPlaylist = jsonResponse.items.map(item => (
+                {
+                    id: item.track.id,
+                    name: item.track.name,
+                    artist: item.track.artists[0].name,
+                    album: item.track.album.name,
+                    uri: item.track.uri  
+                })
+            )
+            return retrivedPlaylist;
+        }) 
     }
 }
 
