@@ -1,5 +1,6 @@
 const clientId = '51d9a7cf9f3340a2b0fa8d4a9ad6e625';
-const redirectURI = "http://ewelina.surge.sh";
+const redirectURI = "http://localhost:3000";
+// const redirectURI = "http://ewelina.surge.sh/callback";
 let accessToken;
 let userId;
 
@@ -42,7 +43,8 @@ const Spotify = {
                 name: track.name,
                 artist: track.artists[0].name,
                 album: track.album.name,
-                uri: track.uri
+                uri: track.uri,
+                preview: track.preview_url
             }));
         });
     }, 
@@ -87,7 +89,7 @@ const Spotify = {
             return userPlaylists;
         })
     },
-    async savePlaylist(playlistName, playlistTracks, id, trackURIsToDelete) {
+    async savePlaylist(playlistName, playlistTracks, id) {
 
         if (!playlistName || !playlistTracks) {
             return;
@@ -149,7 +151,8 @@ const Spotify = {
                     name: item.track.name,
                     artist: item.track.artists[0].name,
                     album: item.track.album.name,
-                    uri: item.track.uri  
+                    uri: item.track.uri, 
+                    preview: item.track.preview_url 
                 })
             )
             return retrivedPlaylist;
